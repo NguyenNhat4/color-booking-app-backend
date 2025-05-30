@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: color_swap_db_backend # Unique name for this db instance
+    restart: always
+    environment:
+      # These can be overridden by variables in a .env file in the project root or host environment
+      POSTGRES_USER: ${POSTGRES_USER:-colorswapuser_backend}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-colorswappass_backend}
+      POSTGRES_DB: ${POSTGRES_DB:-colorswapdb_backend}
+    ports:
+      # Use a different host port if you have another PostgreSQL instance or configure via root .env
+      - "${POSTGRES_EXPOSED_PORT_BACKEND:-5433}:5432"
+    volumes:
+      - postgres_data_backend:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-colorswapuser_backend} -d ${POSTGRES_DB:-colorswapdb_backend}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: . # Current directory (Backend) where this docker-compose.yml is located
+      dockerfile: Dockerfile # Assumes Dockerfile is in the Backend directory
+    container_name: color_swap_api_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${API_PORT_BACKEND:-8001}:8000" # Use a different host port or configure via root .env
+    env_file:
+      - ./.env # Looks for .env in the Backend directory for API specific settings
+    environment:
+      # DATABASE_URL is constructed using variables from the root .env / host env,
+      # resolved by Docker Compose before being passed to the container.
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-colorswapuser_backend}:${POSTGRES_PASSWORD:-colorswappass_backend}@db:5432/${POSTGRES_DB:-colorswapdb_backend}"
+      # SECRET_KEY, ALGORITHM etc. are expected to be in Backend/.env
+    volumes:
+      - .:/app # Mounts the Backend directory to /app in the container for development
+
+volumes:
+  postgres_data_backend: # Defines the named volume for PostgreSQL data persistence 
