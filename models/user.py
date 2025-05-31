@@ -30,7 +30,7 @@ class User(Base):
     phone_number = Column(String, nullable=True)
     
     # Account Management
-    account_type = Column(SQLEnum(AccountType), nullable=True)
+    account_type = Column(SQLEnum(AccountType), default=None, nullable=True)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     verification_token = Column(String, nullable=True)
