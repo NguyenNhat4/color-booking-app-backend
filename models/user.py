@@ -54,7 +54,7 @@ class User(Base):
     @property
     def full_name(self):
         """Returns the user's full name"""
-        if self.first_name and self.last_name:
+        if self.first_name is not None and self.last_name is not None:
             return f"{self.first_name} {self.last_name}"
         return self.username
     
