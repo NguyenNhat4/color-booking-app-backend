@@ -57,15 +57,7 @@ async def update_current_user_profile(
             detail="Failed to update user profile"
         )
 
-@users_router.get("/me/profile", response_model=UserResponse)
-async def get_detailed_user_profile(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get detailed current user profile information.
-    This endpoint provides comprehensive user data including account type and preferences.
-    """
-    return UserResponse.from_orm(current_user)
+
 
 @users_router.delete("/me")
 async def delete_current_user_account(

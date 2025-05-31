@@ -146,14 +146,7 @@ async def login_user(
             detail="Login failed"
         )
 
-@auth_router.get("/me", response_model=UserResponse)
-async def get_current_user_profile(
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get current authenticated user's profile information.
-    """
-    return UserResponse.from_orm(current_user)
+
 
 @auth_router.put("/account-type", response_model=UserResponse)
 async def select_account_type(
@@ -183,36 +176,7 @@ async def select_account_type(
             detail="Failed to update account type"
         )
 
-@auth_router.put("/profile", response_model=UserResponse)
-async def update_user_profile(
-    profile_data: UserProfileUpdateRequest,
-    current_user: User = Depends(get_current_user),
-    database_session: Session = Depends(get_database_session)
-):
-    """
-    Update current user's profile information.
-    Only provided fields will be updated.
-    """
-    user_service = UserService(database_session)
-    
-    try:
-        # Convert Pydantic model to dict, excluding None values
-        update_data = profile_data.dict(exclude_unset=True, exclude_none=True)
-        
-        updated_user = user_service.update_user_profile(
-            user_id=current_user.id,  # type: ignore[arg-type]
-            profile_data=update_data
-        )
-        
-        return UserResponse.from_orm(updated_user)
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update user profile"
-        )
+
 
 @auth_router.post("/verify-email/{verification_token}")
 async def verify_email(
