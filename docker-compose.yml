@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "${API_PORT_BACKEND:-8001}:8000" # Use a different host port or configure via root .env
+      - "0.0.0.0:${API_PORT_BACKEND:-8001}:8000" # Use a different host port or configure via root .env
     env_file:
       - ./.env # Looks for .env in the Backend directory for API specific settings
     environment:
