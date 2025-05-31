@@ -94,9 +94,11 @@ async def register_user(
     except HTTPException:
         raise
     except Exception as e:
+        # In development, include the actual error for debugging
+        error_detail = f"Failed to create user account: {str(e)}" if settings.DEBUG else "Failed to create user account"
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create user account"
+            detail=error_detail
         )
 
 @auth_router.post("/login", response_model=TokenResponse)
