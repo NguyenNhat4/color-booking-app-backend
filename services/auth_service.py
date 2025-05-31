@@ -105,7 +105,9 @@ class UserService:
             last_name=last_name,
             phone_number=phone_number,
             verification_token=verification_token,
-            is_verified=False  # Email verification required
+            is_active=True,  # Explicitly set based on model default
+            is_verified=False, # Already explicit
+            has_completed_account_selection=False # Explicitly set based on model default
         )
         
         self.database_session.add(new_user)
