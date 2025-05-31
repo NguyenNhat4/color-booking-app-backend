@@ -152,8 +152,8 @@ class UserService:
                 detail="User not found"
             )
         
-        user.account_type = account_type
-        user.has_completed_account_selection = True
+        user.account_type = account_type  # type: ignore[assignment]
+        user.has_completed_account_selection = True  # type: ignore[assignment]
         self.database_session.commit()
         self.database_session.refresh(user)
         
@@ -174,7 +174,7 @@ class UserService:
             if hasattr(user, field) and value is not None:
                 setattr(user, field, value)
         
-        user.updated_at = datetime.utcnow()
+        user.updated_at = datetime.utcnow()  # type: ignore[assignment]
         self.database_session.commit()
         self.database_session.refresh(user)
         
@@ -189,8 +189,8 @@ class UserService:
         if not user:
             return False
         
-        user.is_verified = True
-        user.verification_token = None
+        user.is_verified = True  # type: ignore[assignment]
+        user.verification_token = None  # type: ignore[assignment]
         self.database_session.commit()
         
         return True
@@ -204,7 +204,7 @@ class UserService:
             return None
         
         reset_token = AuthenticationService.generate_verification_token()
-        user.verification_token = reset_token
+        user.verification_token = reset_token  # type: ignore[assignment]
         self.database_session.commit()
         
         return reset_token
