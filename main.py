@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from config import settings
 from database import engine, Base
 from api.auth import auth_router
+from api.users import users_router
 from models import User  # Import to ensure tables are created
 
 @asynccontextmanager
@@ -36,8 +37,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include authentication router
+# Include routers
 app.include_router(auth_router)
+app.include_router(users_router)
 
 @app.get("/")
 async def root():
