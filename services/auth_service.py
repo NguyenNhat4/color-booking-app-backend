@@ -76,8 +76,8 @@ class UserService:
         ).first()
     
     def create_user(self, email: str, username: str, password: str, 
-                   first_name: str = None, last_name: str = None, 
-                   phone_number: str = None) -> User:
+                   first_name: str = "", last_name: str = "", 
+                   phone_number: str = "") -> User:
         """Create a new user account"""
         
         # Check if user already exists
