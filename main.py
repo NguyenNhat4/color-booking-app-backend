@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 
 from config import settings
@@ -27,6 +28,44 @@ app = FastAPI(
     version=settings.VERSION,
     lifespan=lifespan
 )
+
+def custom_openapi():
+    """Custom OpenAPI schema with JWT Bearer authentication"""
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+        title=settings.PROJECT_NAME,
+        version=settings.VERSION,
+        description=settings.DESCRIPTION,
+        routes=app.routes,
+    )
+    
+    # Add JWT Bearer authentication scheme
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "Enter your JWT token in the format: your_token_here"
+        }
+    }
+    
+    # Apply security to all protected endpoints
+    for path in openapi_schema["paths"]:
+        for method in openapi_schema["paths"][path]:
+            # Skip login and register endpoints (they don't need auth)
+            if path in ["/auth/login", "/auth/register", "/", "/health"] or method == "options":
+                continue
+            
+            # Add security requirement to protected endpoints
+            if "security" not in openapi_schema["paths"][path][method]:
+                openapi_schema["paths"][path][method]["security"] = [{"BearerAuth": []}]
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 # Add CORS middleware
 app.add_middleware(
