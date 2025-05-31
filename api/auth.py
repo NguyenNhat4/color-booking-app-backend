@@ -85,9 +85,9 @@ async def register_user(
             email=user_data.email,
             username=user_data.username,
             password=user_data.password,
-            first_name=user_data.first_name,
-            last_name=user_data.last_name,
-            phone_number=user_data.phone_number
+            first_name=user_data.first_name or "",
+            last_name=user_data.last_name or "",
+            phone_number=user_data.phone_number or ""
         )
         
         return UserResponse.from_orm(new_user)
@@ -169,7 +169,7 @@ async def select_account_type(
     
     try:
         updated_user = user_service.update_account_type(
-            user_id=current_user.id,
+            user_id=int(current_user.id),
             account_type=account_type_data.account_type
         )
         
@@ -200,7 +200,7 @@ async def update_user_profile(
         update_data = profile_data.dict(exclude_unset=True, exclude_none=True)
         
         updated_user = user_service.update_user_profile(
-            user_id=current_user.id,
+            user_id=int(current_user.id),
             profile_data=update_data
         )
         
