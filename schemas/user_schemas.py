@@ -70,6 +70,7 @@ class UserResponse(BaseModel):
     zip_code: Optional[str] = None
     country: Optional[str] = None
     created_at: datetime
+    updated_at: Optional[datetime] = None
     last_login: Optional[datetime] = None
     
     class Config:

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from datetime import timedelta
+import logging
 
 from database import get_database_session
 from services.auth_service import AuthenticationService, UserService
@@ -94,11 +95,11 @@ async def register_user(
     except HTTPException:
         raise
     except Exception as e:
-        # In development, include the actual error for debugging
-        error_detail = f"Failed to create user account: {str(e)}" if settings.DEBUG else "Failed to create user account"
+        # Log the actual error for debugging
+        logging.error(f"Registration error: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_detail
+            detail=f"Failed to create user account: {str(e)}"
         )
 
 @auth_router.post("/login", response_model=TokenResponse)

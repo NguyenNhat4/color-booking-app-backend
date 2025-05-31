@@ -44,3 +44,5 @@ services:
 
 volumes:
   postgres_data_backend: # Defines the named volume for PostgreSQL data persistence 
+
+  # postgresql://[username]:[password]@[host]:[port]/[database_name]
