@@ -218,8 +218,8 @@ class UserService:
         if not user:
             return False
         
-        user.hashed_password = AuthenticationService.hash_password(new_password)
-        user.verification_token = None
+        user.hashed_password = AuthenticationService.hash_password(new_password)  # type: ignore[assignment]
+        user.verification_token = None  # type: ignore[assignment]
         self.database_session.commit()
         
         return True 
