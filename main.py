@@ -14,11 +14,26 @@ from models import User, Image, ProcessedImage, DemoImage  # Import to ensure ta
 async def lifespan(app: FastAPI):
     """
     Application lifespan manager for startup and shutdown events.
-    Creates database tables on startup.
+    Creates database tables on startup and ensures storage directories exist.
     """
     # Create database tables
     Base.metadata.create_all(bind=engine)
     print("Database tables created successfully")
+    
+    # Ensure storage directories exist
+    import os
+    storage_dirs = [
+        "storage/images",
+        "storage/thumbnails",
+        "storage/processed",
+        "storage/demo",
+        "storage/demo/thumbnails"
+    ]
+    
+    for directory in storage_dirs:
+        os.makedirs(directory, exist_ok=True)
+    print("Storage directories created successfully")
+    
     yield
     # Cleanup code can be added here if needed
 

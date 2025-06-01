@@ -24,7 +24,7 @@ class ImageStorageService:
         for path in [self.images_path, self.thumbnails_path, self.processed_path, self.demo_path]:
             os.makedirs(path, exist_ok=True)
     
-    async def save_uploaded_file(self, file: UploadFile, user_id: str) -> Tuple[str, str]:
+    async def save_uploaded_file(self, file: UploadFile, user_id: int) -> Tuple[str, str]:
         """Save uploaded file and return file path and filename"""
         # Generate unique filename
         filename = file.filename or "unknown.jpg"
@@ -212,7 +212,7 @@ class ImageService:
     async def upload_image(
         self, 
         file: UploadFile, 
-        user_id: str, 
+        user_id: int, 
         room_type: Optional[str] = None,
         description: Optional[str] = None
     ) -> Image:
@@ -294,7 +294,7 @@ class ImageService:
         try:
             # Apply color overlay
             processed_img, processing_time = await self.processing_service.apply_color_overlay(
-                image.storage_path, region_data, color_code, opacity
+                image.storage_path, region_data, color_code, opacity # type: ignore
             )
             
             # Save processed image

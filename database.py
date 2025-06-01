@@ -21,4 +21,7 @@ def get_database_session():
     try:
         yield database_session
     finally:
-        database_session.close() 
+        database_session.close()
+
+# Alias for compatibility
+get_db = get_database_session 

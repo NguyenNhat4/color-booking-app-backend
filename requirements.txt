@@ -15,4 +15,6 @@ pytest-asyncio==0.21.1
 httpx==0.25.2
 # Image processing dependencies
 Pillow==10.1.0
-aiofiles==23.2.1 
+aiofiles==23.2.1
+# For debugging and linting
+mypy==1.5.1 

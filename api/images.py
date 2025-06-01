@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional, List, Any, Dict, cast
 import os
 
 from database import get_db
@@ -44,23 +44,23 @@ async def upload_image(
         # Upload image
         image = await image_service.upload_image(
             file=file,
-            user_id=str(current_user.id),
+            user_id=int(current_user.id),  # type: ignore
             room_type=room_type,
             description=description
         )
         
         # Generate URLs (for MVP, we'll use simple file paths)
         base_url = "http://localhost:8001"  # TODO: Get from config
-        original_url = f"{base_url}/images/files/{os.path.basename(image.storage_path)}"
-        thumbnail_url = f"{base_url}/images/thumbnails/{os.path.basename(image.storage_path).replace('.', '_thumb.')}"
+        original_url = f"{base_url}/images/files/{os.path.basename(str(image.storage_path))}"
+        thumbnail_url = f"{base_url}/images/thumbnails/{os.path.basename(str(image.storage_path)).replace('.', '_thumb.')}"
         
         response_data = ImageUploadResponse(
-            image_id=image.id,
+            image_id=str(image.id),
             original_url=original_url,
             thumbnail_url=thumbnail_url,
-            upload_time=image.upload_time,
-            file_size=image.file_size,
-            dimensions=ImageDimensions(width=image.width, height=image.height)
+            upload_time=image.upload_time,  # type: ignore
+            file_size=int(image.file_size),  # type: ignore
+            dimensions=ImageDimensions(width=int(image.width), height=int(image.height))  # type: ignore
         )
         
         return StandardResponse(
@@ -109,17 +109,17 @@ async def apply_color_to_image(
         
         # Generate URLs
         base_url = "http://localhost:8001"  # TODO: Get from config
-        processed_url = f"{base_url}/images/processed/{os.path.basename(processed_image.storage_path)}"
-        thumbnail_url = f"{base_url}/images/thumbnails/{os.path.basename(processed_image.storage_path).replace('.', '_thumb.')}"
+        processed_url = f"{base_url}/images/processed/{os.path.basename(str(processed_image.storage_path))}"
+        thumbnail_url = f"{base_url}/images/thumbnails/{os.path.basename(str(processed_image.storage_path)).replace('.', '_thumb.')}"
         
         response_data = ColorApplicationResponse(
-            processed_image_id=processed_image.id,
+            processed_image_id=str(processed_image.id),
             processed_url=processed_url,
             thumbnail_url=thumbnail_url,
-            processing_time=processed_image.processing_time or 0.0,
+            processing_time=float(processed_image.processing_time or 0.0),  # type: ignore
             applied_color=AppliedColorInfo(
-                color_code=processed_image.color_code,
-                color_name=processed_image.color_name,
+                color_code=str(processed_image.color_code),
+                color_name=str(processed_image.color_name),
                 product_id=None  # TODO: Link to product when product catalog is implemented
             )
         )
@@ -157,13 +157,13 @@ async def get_demo_images(
         
         for demo in demo_images:
             demo_info = DemoImageInfo(
-                demo_id=demo.id,
-                name=demo.name,
-                description=demo.description,
-                image_url=f"{base_url}/images/demo/{os.path.basename(demo.storage_path)}",
-                thumbnail_url=f"{base_url}/images/demo/thumbnails/{os.path.basename(demo.thumbnail_path or demo.storage_path)}",
-                room_type=demo.room_type,
-                style=demo.style
+                demo_id=str(demo.id),
+                name=str(demo.name),
+                description=str(demo.description) if demo.description else None,
+                image_url=f"{base_url}/images/demo/{os.path.basename(str(demo.storage_path))}",
+                thumbnail_url=f"{base_url}/images/demo/thumbnails/{os.path.basename(str(demo.thumbnail_path or demo.storage_path))}",
+                room_type=str(demo.room_type),
+                style=str(demo.style) if demo.style else None
             )
             demo_list.append(demo_info)
         
@@ -233,14 +233,14 @@ async def get_my_images(
         
         for image in images:
             image_info = {
-                "image_id": image.id,
-                "original_filename": image.original_filename,
-                "file_size": image.file_size,
-                "dimensions": {"width": image.width, "height": image.height},
-                "room_type": image.room_type,
-                "description": image.description,
+                "image_id": str(image.id),
+                "original_filename": str(image.original_filename),
+                "file_size": int(image.file_size),
+                "dimensions": {"width": int(image.width), "height": int(image.height)},
+                "room_type": str(image.room_type) if image.room_type else None,
+                "description": str(image.description) if image.description else None,
                 "upload_time": image.upload_time,
-                "image_url": f"{base_url}/images/files/{os.path.basename(image.storage_path)}"
+                "image_url": f"{base_url}/images/files/{os.path.basename(str(image.storage_path))}"
             }
             image_list.append(image_info)
         
@@ -276,14 +276,14 @@ async def get_my_processed_images(
         
         for processed in processed_images:
             processed_info = {
-                "processed_image_id": processed.id,
-                "original_image_id": processed.original_image_id,
-                "color_code": processed.color_code,
-                "color_name": processed.color_name,
-                "surface_type": processed.surface_type,
-                "processing_time": processed.processing_time,
+                "processed_image_id": str(processed.id),
+                "original_image_id": str(processed.original_image_id),
+                "color_code": str(processed.color_code),
+                "color_name": str(processed.color_name),
+                "surface_type": str(processed.surface_type),
+                "processing_time": float(processed.processing_time) if processed.processing_time else 0.0,
                 "created_at": processed.created_at,
-                "processed_url": f"{base_url}/images/processed/{os.path.basename(processed.storage_path)}"
+                "processed_url": f"{base_url}/images/processed/{os.path.basename(str(processed.storage_path))}"
             }
             processed_list.append(processed_info)
         
