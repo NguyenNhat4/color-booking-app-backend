@@ -28,6 +28,9 @@ class Settings:
         "http://localhost:3000",
         "http://localhost:8080",
         "http://localhost:8000",
+        "http://localhost:62779",  # Flutter web debug port
+        "http://127.0.0.1:62779",  # Alternative localhost format
+        "*",  # Allow all origins for development (remove in production)
     ]
     
     # Application Settings
