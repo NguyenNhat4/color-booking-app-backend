@@ -5,14 +5,14 @@ from database import get_database_session
 from services.auth_service import UserService
 from schemas import UserResponse, UserProfileUpdateRequest
 from models.user import User
-from api.auth import get_current_user
+from api.auth import get_current_user_oauth2
 
 # Create router for user profile endpoints
 users_router = APIRouter(prefix="/users", tags=["users"])
 
 @users_router.get("/me", response_model=UserResponse)
 async def get_current_user_profile(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user_oauth2)
 ):
     """
     Get current authenticated user's profile information.
@@ -23,7 +23,7 @@ async def get_current_user_profile(
 @users_router.put("/me", response_model=UserResponse)
 async def update_current_user_profile(
     profile_data: UserProfileUpdateRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_oauth2),
     database_session: Session = Depends(get_database_session)
 ):
     """
@@ -61,7 +61,7 @@ async def update_current_user_profile(
 
 @users_router.delete("/me")
 async def delete_current_user_account(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_oauth2),
     database_session: Session = Depends(get_database_session)
 ):
     """

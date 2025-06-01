@@ -9,6 +9,19 @@ from .user_schemas import (
     PasswordResetConfirm
 )
 
+from .image_schemas import (
+    ImageUploadResponse,
+    ColorApplicationRequest,
+    ColorApplicationResponse,
+    DemoImagesResponse,
+    ShareImageRequest,
+    ShareImageResponse,
+    SaveImageRequest,
+    SaveImageResponse,
+    StandardResponse,
+    ErrorResponse
+)
+
 __all__ = [
     "UserRegistrationRequest",
     "UserLoginRequest", 
@@ -17,5 +30,15 @@ __all__ = [
     "UserResponse",
     "TokenResponse",
     "PasswordResetRequest",
-    "PasswordResetConfirm"
+    "PasswordResetConfirm",
+    "ImageUploadResponse",
+    "ColorApplicationRequest",
+    "ColorApplicationResponse",
+    "DemoImagesResponse",
+    "ShareImageRequest",
+    "ShareImageResponse",
+    "SaveImageRequest",
+    "SaveImageResponse",
+    "StandardResponse",
+    "ErrorResponse"
 ] 
