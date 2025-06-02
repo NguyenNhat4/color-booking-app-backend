@@ -39,6 +39,6 @@ class Settings:
     VERSION: str = "1.0.0"
     DESCRIPTION: str = "API for Paint Color Swap mobile application"
 
-settings = Settings() 
+settings = Settings()
 print(settings.DATABASE_URL)
 
